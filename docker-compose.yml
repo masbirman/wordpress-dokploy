@@ -11,7 +11,10 @@ services:
     volumes:
       - wordpress_data:/var/www/html
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - wp-network
     command: >
       bash -c '
       echo "memory_limit = 512M" > /usr/local/etc/php/conf.d/uploads.ini &&
@@ -33,7 +36,18 @@ services:
       MYSQL_ROOT_PASSWORD: root_secure_2024
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - wp-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_secure_2024"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   wordpress_data:
   db_data:
+
+networks:
+  wp-network:
+    driver: bridge
