@@ -1,0 +1,38 @@
+services:
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress_secure_2024
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wp_
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
+    depends_on:
+      - db
+    networks:
+      - dokploy-network
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress_secure_2024
+      MYSQL_ROOT_PASSWORD: root_secure_2024
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - dokploy-network
+
+volumes:
+  wordpress_data:
+  db_data:
+
+networks:
+  dokploy-network:
+    external: true

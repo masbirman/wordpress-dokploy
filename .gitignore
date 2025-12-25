@@ -1,0 +1,16 @@
+# Environment files
+.env
+!.env.example
+
+# WordPress uploads (if you want to exclude them)
+# wp-content/uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
