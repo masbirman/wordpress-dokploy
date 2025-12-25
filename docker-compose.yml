@@ -8,13 +8,29 @@ services:
       WORDPRESS_DB_PASSWORD: wordpress_secure_2024
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_TABLE_PREFIX: wp_
+      # PHP Configuration
+      PHP_MEMORY_LIMIT: 512M
+      PHP_UPLOAD_MAX_FILESIZE: 512M
+      PHP_POST_MAX_SIZE: 512M
+      PHP_MAX_EXECUTION_TIME: 600
+      PHP_MAX_INPUT_TIME: 600
+      PHP_MAX_INPUT_VARS: 5000
     volumes:
       - wordpress_data:/var/www/html
-      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
     depends_on:
       - db
     networks:
       - dokploy-network
+    command: >
+      bash -c '
+      echo "memory_limit = 512M" > /usr/local/etc/php/conf.d/uploads.ini &&
+      echo "upload_max_filesize = 512M" >> /usr/local/etc/php/conf.d/uploads.ini &&
+      echo "post_max_size = 512M" >> /usr/local/etc/php/conf.d/uploads.ini &&
+      echo "max_execution_time = 600" >> /usr/local/etc/php/conf.d/uploads.ini &&
+      echo "max_input_time = 600" >> /usr/local/etc/php/conf.d/uploads.ini &&
+      echo "max_input_vars = 5000" >> /usr/local/etc/php/conf.d/uploads.ini &&
+      docker-entrypoint.sh apache2-foreground
+      '
 
   db:
     image: mysql:8.0
